@@ -1,0 +1,48 @@
+# Runs on GitHub every time you open or update a pull request, and when main changes.
+# Each job shows up as a check on your pull request.
+name: checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  secrets:
+    name: No secrets
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Look for keys and passwords
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  agent-files:
+    name: Agent files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check AGENTS.md, agents, skills, and commands
+        run: bash scripts/check-agent-files.sh
+
+  markdown:
+    name: Markdown
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check the formatting of your agent files
+        uses: DavidAnson/markdownlint-cli2-action@v25
+        with:
+          globs: |
+            AGENTS.md
+            .opencode/**/*.md

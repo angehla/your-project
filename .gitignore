@@ -16,3 +16,21 @@ build/
 
 # Logs
 *.log
+# Keys and passwords never go in a repo
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets/
+
+# Interview recordings and raw notes with real names stay on your laptop
+recordings/
+private/
+
+# Computer and editor files
+Thumbs.db
+desktop.ini
+
+# Downloads and installs
+*.zip
